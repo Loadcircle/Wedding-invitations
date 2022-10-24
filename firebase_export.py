@@ -9,6 +9,11 @@ data = pdfile.iterrows()
 toexport = [
 ]
 
+def value_or_none(value):
+    if str(value) == 'nan':
+        return None
+    return value
+
 for index, row in data:
     family_name = row['family_name']
     if family_name and str(family_name) != 'nan':     
@@ -20,9 +25,7 @@ for index, row in data:
                 'invitation_message' : False,
                 'invites' : [
                 ],
-                'table' : {
-                    '__ref__': "tables/ 9a75wsvKRyU0qhIuHRHN"
-                }
+                'table' : None
             }
 
             toexport.append(data)
@@ -30,11 +33,11 @@ for index, row in data:
         for index, item in enumerate(toexport):
             if item['family_name'] == family_name:
 
-                invite_name = row['invite_name']        
-                email = row['email']
-                phone_number = row['phone_number']
-                sex = row['sex']
-                group = row['group']
+                invite_name = value_or_none(row['invite_name'])
+                email = value_or_none(row['email'])
+                phone_number = value_or_none(row['phone_number'])
+                sex = value_or_none(row['sex'])
+                group = value_or_none(row['group'])
 
                 invite_data = {
                             "isgoing": False,
@@ -46,7 +49,7 @@ for index, row in data:
                         }
                 item['invites'].append(invite_data)
 
+with open('families.json', 'w') as outfile:
+    json.dump(toexport, outfile)
+    print('exported file')
 
-# print(toexport)
-
-print(json.dumps(toexport))
